@@ -4,7 +4,7 @@
   "description": "​Mini project for college which ​turned any host on network into a HTTP cloud storage service",
   "main": "app.js",
   "scripts": {
-    "start": "nodemon app",
+    "start": "node app",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
