@@ -13,11 +13,10 @@ app.use(bodyParser.urlencoded({
 	extended: true
 }))
 
-
 app.get('/',(req,res) => {
 	res.send(
 		`<h1>CLOUD STORAGE API</h1>
-		<h3>Mini project for college which turned any host on network into a HTTP cloud storage service. <br />
+		<h3>Mini project for college which turns any host on network into a HTTP cloud storage service. <br />
 		This project is specifically designed for local area networks to host a Cloud-like storage system and providing a level of abstraction over CLI based methods like SSH or telnet for accessing the server.</h3>`
 	)
 })
