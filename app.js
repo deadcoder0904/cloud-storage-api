@@ -32,7 +32,7 @@ app.get('/showFileContents/:file',(req,res) => {
 	 		res.json({msg: `No file named '${file}' exists inside 'cloud' folder`})
 		}
 		else {
-			console.log(chalk.blue(`Contents of the file '${chalk.cyan(file)}' inside ${chalk.yellow('cloud')} folder are ${chalk.blue(contents == '' ? 'Empty': contents)}`))
+			console.log(chalk.blue(`Contents of the file '${chalk.cyan(file)}' inside ${chalk.yellow('cloud')} folder are ${chalk.green(contents == '' ? 'Empty': contents)}`))
 		 	res.json({msg: `Contents of the file '${file}' inside 'cloud' folder are '${contents == '' ? 'Empty': contents}'`})
 	 	}
 	 }
@@ -54,9 +54,16 @@ app.post('/removeDirectory',(req,res) => {
 	if(!folder || folder.trim().length == 0)
 		res.json({msg: 'Folder param not sent'})
 	else {
-		shell.rm('-rf',`cloud/${folder}`)
-		console.log(chalk.blue(`Folder ${chalk.cyan(folder)} deleted inside ${chalk.yellow('cloud')} folder`))
-	 	res.json({msg: `Folder '${folder}' deleted inside 'cloud/' folder`})
+		const doesFolderExist = shell.ls(`cloud/${folder}`)
+		if(doesFolderExist.code == 2) {
+			console.log(chalk.blue(`Folder '${chalk.cyan(folder)}' does not exists inside ${chalk.yellow('cloud')} folder`))
+	 		res.json({msg: `Folder '${folder}' does not exists inside 'cloud' folder`})
+		}
+		else {
+			shell.rm('-rf',`cloud/${folder}`)
+			console.log(chalk.blue(`Folder ${chalk.cyan(folder)} deleted inside ${chalk.yellow('cloud')} folder`))
+		 	res.json({msg: `Folder '${folder}' deleted inside 'cloud/' folder`})
+		}
 	 }
 })
 
@@ -80,8 +87,8 @@ app.post('/writeToFile',(req,res) => {
 		if(!content || content.trim().length == 0)
 			res.json({msg: 'Content param not sent'})
 	else {
-		const cat = shell.cat(`cloud/${file}`)
-		if(cat.code == 1) {
+		const doesFileExist = shell.cat(`cloud/${file}`)
+		if(doesFileExist.code == 1) {
 			console.log(chalk.blue(`No file named '${chalk.cyan(file)}' exists inside ${chalk.yellow('cloud')} folder`))
 	 		res.json({msg: `No file named '${file}' exists inside 'cloud' folder`})
 		}
@@ -98,12 +105,13 @@ app.post('/removeFile',(req,res) => {
 	if(!file || file.trim().length == 0)
 		res.json({msg: 'File param not sent'})
 	else {
-		const rm = shell.rm(`cloud/${file}`)
-		if(rm.code != 0) {
+		const doesFileExist = shell.cat(`cloud/${file}`)
+		if(doesFileExist.code != 1) {
 			console.log(chalk.blue(`No file named '${chalk.cyan(file)}' exists inside ${chalk.yellow('cloud')} folder`))
 	 		res.json({msg: `No file named '${file}' exists inside 'cloud' folder`})	
 		}
 		else {
+			shell.rm(`cloud/${file}`)
 			console.log(chalk.blue(`File ${chalk.cyan(file)} removed from ${chalk.yellow('cloud')} folder`))
 		 	res.json({msg: `File '${file}' removed from 'cloud/' folder`})
 		}
