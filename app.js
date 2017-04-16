@@ -29,7 +29,7 @@ app.get('/showFileContents/:file',(req,res) => {
 		const contents = shell.cat(`cloud/${file}`)
 		if(contents.code == 1) {
 			console.log(chalk.blue(`No file named '${chalk.cyan(file)}' exists inside ${chalk.yellow('cloud')} folder`))
-	 		res.json({msg: `No file named '${file}' exists inside 'cloud' folder`})	
+	 		res.json({msg: `No file named '${file}' exists inside 'cloud' folder`})
 		}
 		else {
 			console.log(chalk.blue(`Contents of the file '${chalk.cyan(file)}' inside ${chalk.yellow('cloud')} folder are ${chalk.blue(contents == '' ? 'Empty': contents)}`))
@@ -68,6 +68,28 @@ app.post('/createFile',(req,res) => {
 		shell.touch(`cloud/${file}`)
 		console.log(chalk.blue(`File ${chalk.cyan(file)} created inside ${chalk.yellow('cloud')} folder`))
 	 	res.json({msg: `File '${file}' created inside 'cloud/' folder`})
+	 }
+})
+
+app.post('/writeToFile',(req,res) => {
+	const file = req.body.file
+	const content = req.body.content
+	if(!file || file.trim().length == 0)
+		res.json({msg: 'File param not sent'})
+	else
+		if(!content || content.trim().length == 0)
+			res.json({msg: 'Content param not sent'})
+	else {
+		const cat = shell.cat(`cloud/${file}`)
+		if(cat.code == 1) {
+			console.log(chalk.blue(`No file named '${chalk.cyan(file)}' exists inside ${chalk.yellow('cloud')} folder`))
+	 		res.json({msg: `No file named '${file}' exists inside 'cloud' folder`})
+		}
+		else {
+			shell.echo(content).to(`cloud/${file}`)
+			console.log(chalk.blue(`Copied Content into File ${chalk.cyan(file)} inside ${chalk.yellow('cloud')} folder`))
+		 	res.json({msg: `Copied Content into File ${file} inside 'cloud' folder`})
+		}
 	 }
 })
 
